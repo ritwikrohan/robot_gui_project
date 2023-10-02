@@ -23,7 +23,7 @@ void RobotGui::odomCallback(
 
 
 void RobotGui::run() {
-  cv::Mat frame = cv::Mat(1000, 400, CV_8UC3);
+  cv::Mat frame = cv::Mat(1000, 425, CV_8UC3);
   cv::namedWindow(WINDOW_NAME);
   cvui::init(WINDOW_NAME);
 
@@ -32,40 +32,40 @@ void RobotGui::run() {
 
  // TELEOPERATION BUTTONS
     
-    if (cvui::button(frame, 140, 275, " Forward ")) {
+    if (cvui::button(frame, 140, 325, " Forward ")) {
       twist_msg.linear.x = twist_msg.linear.x + linear_velocity_step;
     }
 
-    if (cvui::button(frame, 140, 315, "   Stop  ")) {
+    if (cvui::button(frame, 140, 365, "   Stop  ")) {
       twist_msg.linear.x = 0.0;
       twist_msg.angular.z = 0.0;
     }
 
-    if (cvui::button(frame, 65, 315, " Left ")) {
+    if (cvui::button(frame, 65, 365, " Left ")) {
       twist_msg.angular.z = twist_msg.angular.z + angular_velocity_step;
     }
 
-    if (cvui::button(frame, 240, 315, " Right ")) {
+    if (cvui::button(frame, 240, 365, " Right ")) {
       twist_msg.angular.z = twist_msg.angular.z - angular_velocity_step;
     }
 
-    if (cvui::button(frame, 140, 355, "Backward")) {
+    if (cvui::button(frame, 140, 405, "Backward")) {
       twist_msg.linear.x = twist_msg.linear.x - linear_velocity_step;
     }
     twist_pub_.publish(twist_msg);
 
  // CURRENT VELOCITY (Linear Velocity in x direction and Angular Velocity in Z direction)
     
-    cvui::window(frame, 20, 400, 130, 60, "Linear velocity:");
-    cvui::printf(frame, 30, 430, 0.5, 0xff0000, "%.02f m/sec",
+    cvui::window(frame, 20, 450, 130, 60, "Linear velocity:");
+    cvui::printf(frame, 30, 480, 0.5, 0xff0000, "%.02f m/sec",
                  twist_msg.linear.x);
-    cvui::window(frame, 200, 400, 130, 60, "Angular velocity:");
-    cvui::printf(frame, 210, 430, 0.5, 0xff0000, "%.02f rad/sec",
+    cvui::window(frame, 200, 450, 130, 60, "Angular velocity:");
+    cvui::printf(frame, 210, 480, 0.5, 0xff0000, "%.02f rad/sec",
                  twist_msg.angular.z);
 
  // ROBOT INFORMATION
     
-    cvui::window(frame, 10, 10, 350, 250, "Topic: " + info_topic_name);
+    cvui::window(frame, 10, 10, 400, 300, "Topic: " + info_topic_name);
     cvui::printf(frame, 15, 35, 0.5, 0xffffff,"Info received:");
     cvui::printf(frame, 15, 60, 0.5, 0xffffff,"1. %s", info_data_.data_field_01.c_str());
     cvui::printf(frame, 15, 85, 0.5, 0xffffff,"2. %s", info_data_.data_field_02.c_str());
@@ -75,19 +75,23 @@ void RobotGui::run() {
     cvui::printf(frame, 15, 185, 0.5, 0xffffff,"6. %s", info_data_.data_field_06.c_str());
     cvui::printf(frame, 15, 210, 0.5, 0xffffff,"7. %s", info_data_.data_field_07.c_str());
     cvui::printf(frame, 15, 235, 0.5, 0xffffff,"8. %s", info_data_.data_field_08.c_str());
+    cvui::printf(frame, 15, 260, 0.5, 0xffffff,"9. %s", info_data_.data_field_09.c_str());
+    cvui::printf(frame, 15, 285, 0.5, 0xffffff,"10. %s", info_data_.data_field_10.c_str());
 
  // ODOMETRY INFORMATION
 
-    cvui::window(frame, 10, 460, 350, 200, "Topic: " + odom_topic_name);
-    cvui::printf(frame, 15, 485, 0.5, 0xffffff,"Odometry Information");
-    cvui::printf(frame, 15, 520, 1, 0xffffff,"1. X = %0.2f", odom_data_.pose.pose.position.x);
-    cvui::printf(frame, 15, 555, 1, 0xffffff,"2. Y = %0.2f", odom_data_.pose.pose.position.y);
-    cvui::printf(frame, 15, 590, 1, 0xffffff,"3. Z = %0.2f", odom_data_.pose.pose.position.z);
+    cvui::window(frame, 10, 520, 120, 100, "Topic: " + odom_topic_name + " X");
+    // cvui::printf(frame, 15, 535, 0.5, 0xffffff,"Odometry Information");
+    cvui::printf(frame, 15, 570, 0.5, 0xffffff,"X = %0.2f", odom_data_.pose.pose.position.x);
+    cvui::window(frame, 140, 520, 120, 100, "Topic: " + odom_topic_name + " Y");
+    cvui::printf(frame, 150, 570, 0.5, 0xffffff,"Y = %0.2f", odom_data_.pose.pose.position.y);
+    cvui::window(frame, 270, 520, 120, 100, "Topic: " + odom_topic_name + " Z");
+    cvui::printf(frame, 280, 570, 0.5, 0xffffff,"Z = %0.2f", odom_data_.pose.pose.position.z);
 
  // CALLING SERVICE TO GET DISTANCE
 
     cvui::window(frame, 50, 720, 250, 100, "Service: " + service_name);
-    if (cvui::button(frame, 130, 675, "Call Service")) {
+    if (cvui::button(frame, 130, 685, "Call Service")) {
       if (service_client.call(srv_req)) {
         ROS_DEBUG("Response message: %s", srv_req.response.message.c_str());
         last_service_call_msg = srv_req.response.message;
